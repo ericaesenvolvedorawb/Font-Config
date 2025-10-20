@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroMundo: Aventuras na Leitura e nos Números</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        /* Importação da fonte OpenDyslexic */
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/otf/OpenDyslexic-Regular.otf') format('opentype');
+        }
+
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FF9800;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --card-color: #fff;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 12px;
+            background-color: var(--card-color);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 70px;
+        }
+
+        /* Estilos para acessibilidade */
+        .dyslexic-font {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .cursive-font {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.1em;
+            letter-spacing: 0.02em;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .high-contrast {
+            --background-color: #000;
+            --card-color: #111;
+            --text-color: #fff;
+            --primary-color: #ffcc00;
+            --secondary-color: #00ccff;
+            --accent-color: #ff6600;
+        }
+
+        /* Header e navegação */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Menu principal */
+        .main-menu {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .menu-item {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .menu-item.portuguese {
+            background-color: var(--secondary-color);
+        }
+
+        .menu-item.math {
+            background-color: var(--accent-color);
+        }
+
+        .menu-item h2 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .menu-item p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Configurações */
+        .settings-panel {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-section {
+            margin-bottom: 15px;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .setting-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Tela de configurações */
+        #settings-screen {
+            padding: 8px;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .welcome-message {
+            background-color: #e8f5e9;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .welcome-message h3 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .welcome-message p {
+            font-size: 0.85rem;
+        }
+
+        /* Navegação inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+            margin-bottom: 2px;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: bold;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Utilitários */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        /* Campos de entrada */
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        /* Ajustes para elementos específicos */
+        #player-name {
+            max-width: 150px;
+        }
+
+        .setting-option span {
+            font-size: 0.9rem;
+        }
+
+        /* Exemplo de fonte cursiva */
+        .cursive-preview {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            text-align: center;
+            border: 1px dashed #ccc;
+        }
+
+        /* Estilo específico para a fonte Pacifico quando ativa */
+        .cursive-font .logo {
+            font-family: 'Pacifico', cursive;
+            font-weight: normal;
+        }
+
+        .cursive-font .menu-item h2 {
+            font-family: 'Pacifico', cursive;
+            font-weight: normal;
+        }
+
+        .cursive-font .activity-title {
+            font-family: 'Pacifico', cursive;
+            font-weight: normal;
+        }
+
+        .cursive-font .user-name {
+            font-family: 'Pacifico', cursive;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">NeuroMundo</div>
+            <div class="avatar-section">
+                <div class="avatar" id="user-avatar">🦊</div>
+                <div class="user-name" id="user-name">Aventureiro</div>
+            </div>
+        </header>
+
+        <!-- Tela Principal -->
+        <div id="main-screen">
+            <div class="main-menu">
+                <div class="menu-item portuguese" id="portuguese-btn">
+                    <h2>Jardim das Rimas</h2>
+                    <p>Língua Portuguesa</p>
+                </div>
+                <div class="menu-item math" id="math-btn">
+                    <h2>Montanha dos Números</h2>
+                    <p>Matemática</p>
+                </div>
+                <div class="menu-item" id="missions-btn">
+                    <h2>Mapa da Aventura</h2>
+                    <p>Missões</p>
+                </div>
+                <div class="menu-item" id="achievements-btn">
+                    <h2>Baú de Troféus</h2>
+                    <p>Conquistas</p>
+                </div>
+            </div>
+
+            <div class="welcome-message">
+                <h3>Bem-vindo ao NeuroMundo!</h3>
+                <p>Escolha uma das áreas para começar sua aventura de aprendizado.</p>
+            </div>
+        </div>
+
+        <!-- Tela de Configurações -->
+        <div id="settings-screen" class="hidden">
+            <div class="settings-header">
+                <button class="back-button" id="back-from-settings">←</button>
+                <h2>Configurações</h2>
+            </div>
+            
+            <div class="settings-panel">
+                <div class="settings-section">
+                    <h3>Quem Joga</h3>
+                    <div class="setting-option">
+                        <span>Escolher Animal</span>
+                        <button id="choose-animal-btn">Selecionar</button>
+                    </div>
+                    <div class="setting-option">
+                        <span>Nome do Jogador</span>
+                        <input type="text" id="player-name" placeholder="Digite seu nome">
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Como Eu Vejo</h3>
+                    <div class="setting-option">
+                        <span>Usar Fonte OpenDyslexic</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dyslexic-font-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-option">
+                        <span>Usar Fonte Pacifico</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="cursive-font-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="cursive-preview hidden" id="cursive-preview">
+                        ✨ Texto de exemplo com a fonte Pacifico ✨
+                    </div>
+                    <div class="setting-option">
+                        <span>Letras MAIÚSCULAS</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="uppercase-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-option">
+                        <span>Alto Contraste</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="high-contrast-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Como Eu Ouço</h3>
+                    <div class="setting-option">
+                        <span>Ativar Leitura de Áudio</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="audio-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-option">
+                        <span>Ativar Efeitos Sonoros</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="sound-effects-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-option">
+                        <span>Ativar Música Temática</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="music-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Seleção de Animal -->
+        <div id="animal-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Escolha seu Animal</h3>
+                    <button class="close-modal" id="close-animal-modal">×</button>
+                </div>
+                
+                <p>Selecione um animal para ser seu companheiro de aventura!</p>
+                
+                <div class="animal-selection">
+                    <div class="animal-option" data-animal="fox">
+                        <div class="animal-avatar" style="background-color: #ff9800;">🦊</div>
+                        <div class="animal-name">Raposa</div>
+                    </div>
+                    <div class="animal-option" data-animal="bear">
+                        <div class="animal-avatar" style="background-color: #8d6e63;">🐻</div>
+                        <div class="animal-name">Urso</div>
+                    </div>
+                    <div class="animal-option" data-animal="rabbit">
+                        <div class="animal-avatar" style="background-color: #e0e0e0;">🐰</div>
+                        <div class="animal-name">Coelho</div>
+                    </div>
+                    <div class="animal-option" data-animal="owl">
+                        <div class="animal-avatar" style="background-color: #795548;">🦉</div>
+                        <div class="animal-name">Coruja</div>
+                    </div>
+                </div>
+                
+                <button id="save-animal" class="mt-16">Selecionar Animal</button>
+            </div>
+        </div>
+
+        <!-- Navegação Inferior -->
+        <div class="bottom-nav">
+            <div class="nav-item active" id="nav-home">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Início</div>
+            </div>
+            <div class="nav-item" id="nav-missions">
+                <div class="nav-icon">🗺️</div>
+                <div class="nav-label">Missões</div>
+            </div>
+            <div class="nav-item" id="nav-achievements">
+                <div class="nav-icon">🏆</div>
+                <div class="nav-label">Conquistas</div>
+            </div>
+            <div class="nav-item" id="nav-settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Configurações</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const mainScreen = document.getElementById('main-screen');
+        const settingsScreen = document.getElementById('settings-screen');
+        const animalModal = document.getElementById('animal-modal');
+
+        // Botões de navegação
+        document.getElementById('nav-settings').addEventListener('click', () => {
+            showScreen(settingsScreen);
+            setActiveNav('nav-settings');
+        });
+
+        // Botões de fechar/voltar
+        document.getElementById('back-from-settings').addEventListener('click', () => showScreen(mainScreen));
+        document.getElementById('close-animal-modal').addEventListener('click', () => showScreen(settingsScreen));
+
+        // Navegação inferior
+        document.getElementById('nav-home').addEventListener('click', () => {
+            showScreen(mainScreen);
+            setActiveNav('nav-home');
+        });
+
+        // Configurações de acessibilidade
+        const dyslexicToggle = document.getElementById('dyslexic-font-toggle');
+        const cursiveToggle = document.getElementById('cursive-font-toggle');
+        const uppercaseToggle = document.getElementById('uppercase-toggle');
+        const highContrastToggle = document.getElementById('high-contrast-toggle');
+        const cursivePreview = document.getElementById('cursive-preview');
+
+        // Garantir que apenas uma fonte seja selecionada por vez
+        dyslexicToggle.addEventListener('change', function() {
+            if (this.checked) {
+                cursiveToggle.checked = false;
+                document.body.classList.remove('cursive-font');
+                cursivePreview.classList.add('hidden');
+                document.body.classList.add('dyslexic-font');
+            } else {
+                document.body.classList.remove('dyslexic-font');
+            }
+        });
+
+        cursiveToggle.addEventListener('change', function() {
+            if (this.checked) {
+                dyslexicToggle.checked = false;
+                document.body.classList.remove('dyslexic-font');
+                document.body.classList.add('cursive-font');
+                cursivePreview.classList.remove('hidden');
+            } else {
+                document.body.classList.remove('cursive-font');
+                cursivePreview.classList.add('hidden');
+            }
+        });
+
+        uppercaseToggle.addEventListener('change', function() {
+            document.body.classList.toggle('uppercase', this.checked);
+        });
+
+        highContrastToggle.addEventListener('change', function() {
+            document.body.classList.toggle('high-contrast', this.checked);
+        });
+
+        // Seleção de animal
+        let selectedAnimal = 'fox';
+        const animalOptions = document.querySelectorAll('.animal-option');
+        
+        animalOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remover seleção anterior
+                animalOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Adicionar seleção atual
+                this.classList.add('selected');
+                
+                // Habilitar botão de salvar
+                document.getElementById('save-animal').disabled = false;
+                
+                // Salvar animal selecionado
+                selectedAnimal = this.getAttribute('data-animal');
+            });
+        });
+
+        // Salvar animal selecionado
+        document.getElementById('save-animal').addEventListener('click', function() {
+            const userAvatar = document.getElementById('user-avatar');
+            
+            // Definir emoji do animal selecionado
+            const animalEmojis = {
+                'fox': '🦊',
+                'bear': '🐻',
+                'rabbit': '🐰',
+                'owl': '🦉'
+            };
+            
+            userAvatar.textContent = animalEmojis[selectedAnimal] || '🦊';
+            
+            showScreen(settingsScreen);
+            alert(`Animal selecionado: ${getAnimalName(selectedAnimal)}`);
+        });
+
+        // Função para obter nome do animal
+        function getAnimalName(animalKey) {
+            const animalNames = {
+                'fox': 'Raposa',
+                'bear': 'Urso',
+                'rabbit': 'Coelho',
+                'owl': 'Coruja'
+            };
+            
+            return animalNames[animalKey] || 'Animal';
+        }
+
+        // Atualizar nome do usuário
+        document.getElementById('player-name').addEventListener('input', function() {
+            document.getElementById('user-name').textContent = this.value || 'Aventureiro';
+        });
+
+        // Personalização do avatar
+        document.getElementById('choose-animal-btn').addEventListener('click', () => showScreen(animalModal));
+
+        // Função para mostrar telas
+        function showScreen(screen) {
+            // Esconder todas as telas
+            mainScreen.classList.add('hidden');
+            settingsScreen.classList.add('hidden');
+            animalModal.classList.add('hidden');
+            
+            // Mostrar a tela solicitada
+            screen.classList.remove('hidden');
+        }
+
+        // Função para definir navegação ativa
+        function setActiveNav(navId) {
+            // Remover classe active de todos os itens de navegação
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Adicionar classe active ao item selecionado
+            document.getElementById(navId).classList.add('active');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar nome padrão
+            document.getElementById('player-name').value = 'Aventureiro';
+            
+            // Selecionar animal padrão
+            const defaultAnimal = document.querySelector('.animal-option[data-animal="fox"]');
+            defaultAnimal.classList.add('selected');
+            document.getElementById('save-animal').disabled = false;
+        });
+
+        // Estilos para modal (adicionados via JavaScript para manter o código organizado)
+        const style = document.createElement('style');
+        style.textContent = `
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 16px;
+            }
+
+            .modal-content {
+                background-color: var(--card-color);
+                padding: 16px;
+                border-radius: 12px;
+                width: 100%;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .modal-title {
+                font-size: 1.1rem;
+                color: var(--primary-color);
+            }
+
+            .close-modal {
+                background: none;
+                border: none;
+                font-size: 1.4rem;
+                cursor: pointer;
+            }
+
+            .animal-selection {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-top: 12px;
+            }
+
+            .animal-option {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 8px;
+                border-radius: 10px;
+                cursor: pointer;
+                border: 2px solid transparent;
+            }
+
+            .animal-option:hover {
+                background-color: #f0f0f0;
+            }
+
+            .animal-option.selected {
+                border-color: var(--primary-color);
+                background-color: #e8f5e9;
+            }
+
+            .animal-avatar {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                margin-bottom: 4px;
+            }
+
+            .animal-name {
+                font-size: 0.8rem;
+                text-align: center;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
